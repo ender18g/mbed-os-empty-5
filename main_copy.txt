@@ -1,0 +1,32 @@
+#include "mbed.h"
+#include <stdio.h>
+#include <cmath>
+#include <cstdlib>
+
+// main() runs in its own thread in the OS
+int main() {
+
+  float tempF;
+  float tempC;
+  char message[20];
+  int duration;
+ 
+
+  Timer t;
+  AnalogIn tempIn(PA_0);
+  Serial pc(USBTX, USBRX, 9600);
+
+  while (1) {
+    pc.scanf("%s", message);
+    duration = atoi(message);
+    pc.printf("Starting for %d seconds\n",duration);
+
+    t.reset();
+    t.start();
+    while (t < duration) {
+      tempF = (tempIn.read() * 3.3) * 100;
+      pc.printf("%f,%f\n", t.read(),tempF);
+      ThisThread::sleep_for(10);
+    }
+  }
+}

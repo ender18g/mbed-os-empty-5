@@ -1,0 +1,32 @@
+#include "mbed.h"
+
+// main() runs in its own thread in the OS
+int main() {
+
+  // declare some variables
+  AnalogIn sensor_val(PA_0);
+  Serial pc(USBTX, USBRX, 9600);
+  float tempF;
+  Timer t;
+  float time_limit = 5;
+  char message[20];
+
+  while (1) {
+    // listen for a command from matlab
+    pc.scanf("%s", message);
+
+    t.reset();
+    t.start();
+
+    while (t.read() < time_limit) {
+
+      // read in sensor value
+      tempF = sensor_val.read() * 3.3 * 100;
+      // start timer
+
+      // send it to matlab pc
+      pc.printf("%f,%f\n", t.read(), tempF);
+      wait(.1);
+    }
+  }
+}
